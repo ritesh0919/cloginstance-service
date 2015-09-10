@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- Define application DAOs here -->
+    <bean id="clogInstanceDao" class="com.covisint.platform.clog.server.cloginstance.impl.ClogInstanceJpaDao" />
+    <!-- <bean class="com.covisint.core.support.hibernate.AuditInterceptor" /> -->
+    <!-- Datasource -->
+    <bean id="datasource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <!-- DB connection properties -->
+        <property name="driverClass" value="${db_driver:oracle.jdbc.OracleDriver}" />
+        <property name="jdbcUrl" value="${db_url}" />
+        <property name="user" value="${db_user:clog}" />
+        <property name="password" value="${db_password:clog}" />
+
+        <!-- Pool sizing properties -->
+        <property name="initialPoolSize" value="${db_pool_initialSize:5}" />
+        <property name="maxPoolSize" value="${db_pool_maxSize:25}" />
+        <property name="minPoolSize" value="${db_pool_minSize:0}" />
+        <property name="maxStatements" value="${db_pool_maxStatements:10}" />
+
+        <!-- Connection testing and acquisition properties -->
+        <property name="maxIdleTime" value="${db_con_maxIdleTime:300}" />
+        <property name="idleConnectionTestPeriod" value="${db_con_testPeriod:30}" />
+        <property name="preferredTestQuery" value="${db_con_testQuery:select 1 from dual}" />
+        <property name="acquireIncrement" value="${db_con_acquireIncrement:5}" />
+        <property name="acquireRetryAttempts" value="${db_con_retryAttempts:0}" />
+        <property name="acquireRetryDelay" value="${db_con_retryDelay:3000}" />
+
+        <!-- JMX name -->
+        <property name="dataSourceName" value="Datasource" />
+
+        <!-- Debugging options -->
+        <property name="unreturnedConnectionTimeout" value="${db_con_unreturnedTimeout:0}" />
+        <property name="debugUnreturnedConnectionStackTraces" value="${db_con_debugUnreturned:false}" />
+    </bean>
+    
+    
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="datasource" />
+        <property name="packagesToScan" value="com.covisint.platform.clog.core" />
+        <property name="persistenceProviderClass" value="org.hibernate.jpa.HibernatePersistenceProvider" />
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${db_hib_dialect:org.hibernate.dialect.MySQLDialect}</prop>
+                <prop key="hibernate.default_schema">${db_hib_schema:svc_clog_instance}</prop>
+                <prop key="hibernate.id.new_generator_mappings">true</prop>
+                <prop key="hibernate.jdbc.batch_versioned_data">true</prop>
+                <prop key="hibernate.connection.isolation">${db_hib_isolation_level:4}</prop>
+                <prop key="hibernate.jdbc.fetch_size">${db_hib_fetch_size:50}</prop>
+                <prop key="hibernate.max_fetch_depth">${db_hib_max_fetch_depth:3}</prop>
+                <prop key="hibernate.default_batch_fetch_size">${db_hib_default_batch_size:8}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${db_hib_ddl:validate}</prop>
+                <prop key="hibernate.generate_statistics">${db_hib_generate_stats:true}</prop>
+                <prop key="hibernate.format_sql">${db_hib_format_sql:false}</prop>
+                <prop key="hibernate.ejb.interceptor">com.covisint.core.support.hibernate.AuditInterceptor</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="emf" />
+     </bean>
+
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+</beans>

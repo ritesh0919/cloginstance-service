@@ -1,0 +1,202 @@
+#%RAML 0.8
+title: ClogInstance API
+baseUri: https://api.covisintlabs.com/cloginstance/v1
+protocols: [HTTPS]
+schemas:
+!include common-schema.txt
+  - clogInstance: |
+      {
+        "id" : "http://api.covisint.com/idm/schema/clogInstance/v1",
+        "$schema" : "http://json-schema.org/draft-04/schema",
+        "type" : "object",
+        "description" : "Schema representing a clogInstance resource.",
+        "extends" : {
+          "$ref" : "http://api.covisint.com/idm/schema/realmScopedResource#"
+        },
+        "properties" : {
+          "name" : { 
+            "type" : "string", 
+            "description" : "Name of the CLOG Instance",
+            "required": false
+          },
+          "platformSolutionId" : { 
+            "type" : "string", 
+            "description" : "ID of the platform Solution to which this CLOG Instance associated with",
+            "required": false
+          },
+          "platformInstanceId" : {
+            "type" : "string",
+            "description" : "ID of the platform Instance to which this CLOG Instance is associated with",
+            "required": false
+          }
+        }
+      }
+  - clogInstanceResponse: |
+      {
+        "id" : "http://api.covisint.com/idm/schema/clogInstance/v1",
+        "$schema" : "http://json-schema.org/draft-04/schema",
+        "type" : "object",
+        "description" : "Schema representing a clogInstance resource.",
+        "extends" : {
+          "$ref" : "http://api.covisint.com/idm/schema/realmScopedResource#"
+        },
+        "properties" : {
+          "name" : { 
+            "type" : "string", 
+            "description" : "Name of the CLOG Instance",
+            "required": false
+          },
+          "platformSolutionId" : { 
+            "type" : "string", 
+            "description" : "ID of the platform Solution to which this CLOG Instance associated with",
+            "required": false
+          },
+          "platformInstanceId" : {
+            "type" : "string",
+            "description" : "ID of the platform Instance to which this CLOG Instance is associated with",
+            "required": false
+          },
+          "platformGroupId" : {
+            "type" : "string", 
+            "description" : "Covisint IDM Group to which this CLOG instance is associated with",
+            "required": false
+          },
+          "status" : {
+            "enum" : [ "ACTIVE","DELETED"],
+            "description" : "The clogInstance status after performing post or delete methods ,Statuses can be changed through tasks."
+          },
+          "alias" : {
+            "type" : "string",
+            "description" : "The clogInstance status after performing post or delete methods ,Statuses can be changed through tasks."
+          }
+        }
+      }
+traits: !include common-traits.txt
+
+/cloginstance:
+  is: [secured]
+  post:
+    is: [postResponse]
+    description: This method creates a new clog instance, which includes creation of a new group with owner as passed in platformInstanceId and entitlement as view_logs. It also creates an alias in Elastic Search with name as platfromInstanceId. The alias is created on group_id (new group created)and x-realm (passed in Http Headers).
+    headers:
+      Accept:
+        description: Media type for cloginstance.
+        example: application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json
+        type: string
+        required: true
+      Content-type:
+        description: Content type for cloginstance.
+        example: application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json
+    body:
+      application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json:
+         schema: clogInstance
+    responses:
+      201:
+        description: A new clog instance was created and corresponding id, alias name is returned in response body. 
+        body:
+          application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json:
+            schema: clogInstanceResponse
+      400:
+        description: |
+          There was a problem with the client's request. It could be related to missing name, platformInstanceId and platformSolutionId in request body
+          ___
+          Substatus codes and error messages are mentioned below:
+          + CLOG-05 - Name attribute missing in the payload
+          + CLOG-06 - Plaform Instance ID attribute missing in the payload
+          + CLOG-07 - Solution Instance ID attribute missing in the payload
+          + framework:request:io
+          + framework:request:io:read - Invalid input. There was an error while parsing.
+          + framework:request:io:read:parsing
+          + framework:request:io:write
+          + framework:request:header:missing - Missing request header: {headerName}
+          + framework:request:param:missing - Missing request parameter: {queryParameterName}
+          + framework:request:data:missing - The following information was missing from the resource: {resourceFieldName(s)}
+          + framework:request:data:invalid - The following information should not be part of the resource: {resourceFieldName}
+          + framework:resource:data:illegal - The following information was illegal from the resource:  {fieldSpecificError(s)}
+          + framework:request:invalid:header:value - Invalid x-requestor header value. 
+          + framework:resource:missing - The following resources were not found: {resources}
+        body:
+          application/vnd.com.covisint.error.v1+json:
+            schema: errorResponseSchema
+      502:
+        description: |
+          The Http Status code is returned in case any backend server fails to perform the operation. This includes any error in Group Service or Elastic Search Service.
+          ___
+          Substatus codes and error messages are mentioned below:
+          + CLOG-01 - Clog instance creation failed due to GroupService failure
+          + CLOG-02 - Clog instance creation failed due to upstream elastic search server
+        body:
+          application/vnd.com.covisint.error.v1+json:
+            schema: errorResponseSchema
+
+/cloginstance/{id}:
+  is: [secured]
+  description: Returns Clog Instance details based on the ID passed
+  get:
+    is: [getSearchResponse]
+    description: Returns ClogInstance resources according to the ID provided in query parameter.
+    headers:
+      Accept:
+        description: Media type for cloginstance.
+        example: application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json
+        type: string
+        required: true
+    queryParameters:
+      id:
+        description: CLOG Instance ID.
+        type: string
+        required: true
+    responses:
+      200:
+        description: Clog Instance resource successfully retrieved.
+        body:
+          application/vnd.com.covisint.platform.clog.core.cloginstance.v1+json:
+            schema: clogInstanceResponse
+      400:
+        description: |
+          There was a problem with the client's request
+          ___
+          Substatus codes and error messages are mentioned below:
+          + framework:request
+          + framework:request:io
+          + framework:request:io:read - Invalid input. There was an error while parsing.
+          + framework:request:io:read:parsing
+          + framework:request:io:write
+          + framework:request:header:missing - Missing request header: {headerName}
+          + framework:request:param:missing - Missing request parameter: {queryParameterName}
+          + framework:request:data:missing - The following information was missing from the resource: {resourceFieldName(s)}
+          + framework:request:invalid:header:value - Invalid x-requestor header value.
+          + framework:request:param:invalid - The following parameter should not be part of the request: {queryParameterName}
+        body:
+          application/vnd.com.covisint.error.v1+json:
+            schema: errorResponseSchema
+            
+  delete:
+    is: [deleteResponse]
+    description: Marks the status field of Clog Instance resource (passed as query parameter) as DELETED. It also deletes group and entitlement along with alias in Elastic Search
+    headers:
+    queryParameters:
+      id:
+        description: CLOG Instance ID to be marked as DELETED.
+        type: string
+        required: true
+    responses:
+      204:
+        description: Clog Instance successfully deleted.
+      400:
+        description: |
+          There was a problem with the client's request
+          ___
+          Substatus codes and error messages are mentioned below:
+          + framework:request
+          + framework:request:io
+          + framework:request:io:read - Invalid input. There was an error while parsing.
+          + framework:request:io:read:parsing
+          + framework:request:io:write
+          + framework:request:header:missing - Missing request header: {headerName}
+          + framework:request:param:missing - Missing request parameter: {queryParameterName}
+          + framework:request:data:missing - The following information was missing from the resource: {resourceFieldName(s)}
+          + framework:request:invalid:header:value - Invalid x-requestor header value. 
+        body:
+          application/vnd.com.covisint.error.v1+json:
+            schema: errorResponseSchema

@@ -1,0 +1,4 @@
+/* Copyright (C) 2014 Covisint. All Rights Reserved. */
+Manifest-Version: 1.0
+Class-Path: 
+

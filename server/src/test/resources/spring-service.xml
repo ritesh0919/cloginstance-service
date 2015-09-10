@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:c="http://www.springframework.org/schema/c" xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd ">
+
+    <!-- Define application service beans here -->
+    
+    <bean id="clogInstanceService" class="com.covisint.platform.clog.server.cloginstance.impl.ClogInstanceServiceImpl" 
+    	c:dao-ref="clogInstanceDao" 
+    	c:groupService-ref="groupService" 
+    	c:elasticSearchService-ref="elasticSearchService" />
+    	
+    <bean id="groupService" class="com.covisint.platform.clog.server.groupservice.GroupService" 
+    	c:newGroupClient-ref="groupClient" 
+    	c:newGroupEntitlementClient-ref="groupEntitlementClient"/>
+    	
+    <bean id="elasticSearchService" class="com.covisint.platform.clog.server.elasticsearch.ElasticSearchService" 
+    	c:httpClientService-ref="httpClientService" 
+    	c:elasticSearchUrl="${es_aliasUrl}" 
+    	c:indexName="${es_indexname:cov_logs}"/>
+    	
+    <bean id="httpClientService" class="com.covisint.platform.clog.server.elasticsearch.HttpClientService"/>
+</beans>

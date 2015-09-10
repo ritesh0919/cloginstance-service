@@ -1,0 +1,8 @@
+com.covisint.platform.clog.cloginstance.client
+com.covisint.platform.clog.core
+com.covisint.platform.clog.core.cloginstance
+com.covisint.platform.clog.core.cloginstance.io.json
+com.covisint.platform.clog.model
+com.covisint.platform.clog.server.cloginstance
+com.covisint.platform.clog.server.cloginstance.impl
+com.covisint.platform.clog.server.wrapper
