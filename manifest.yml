@@ -3,6 +3,7 @@ applications:
  - name: clogservice
    memory: 512M
    domain: run.covisintrnd.com
+   buildpack: covs-java
    env:
     db_driver: "com.mysql.jdbc.Driver"
     db_url: "jdbc:mysql://10.96.32.202:3306/cf_aa78c0ba_da5a_4544_8439_a9c343d84554"
