@@ -1,6 +1,6 @@
 ---
 applications:
- - name: clog
+ - name: clogservice
    memory: 512M
    domain: run.covisintrnd.com
    env:
