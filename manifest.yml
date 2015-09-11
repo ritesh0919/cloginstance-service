@@ -1,8 +1,7 @@
 ---
 applications:
  - name: clog
-   memory: 512
-   timeout: 180
+   memory: 512M
    domain: run.covisintrnd.com
    buildpack: cov-apps
    env:
