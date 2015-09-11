@@ -19,6 +19,7 @@
 		<sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.jacoco.itReportPath>${project.basedir}/../target/jacocoit.exec</sonar.jacoco.itReportPath>
 		<sonar.language>java</sonar.language>
 		
 		<sonar.host.url>http://localhost:9000/sonar</sonar.host.url>
@@ -234,6 +235,12 @@
 						</configuration>
 						-->
 					</execution>
+					<execution>
+						<id>default-prepare-agent-integration</id>
+						<goals>
+							<goal>prepare-agent-integration</goal>
+						</goals>
+					</execution>
 					<!--
 					<execution>
 						<id>default-report</id>
@@ -263,6 +270,67 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--
+            <plugin>
+                <groupId>org.cloudfoundry</groupId>
+                <artifactId>cf-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <server>mycloudfoundry-instance</server>
+                    <target>http://api.run.covisintrnd.com</target>
+					<username>rgupta</username>
+					<password>rgupta</password>
+                    <org>catchall</org>
+                    <space>performance</space>
+                    <appname>cloginstance</appname>
+                    <url>cloginstance.run.covisintrnd.com</url>
+                    <memory>512</memory>
+                    <diskQuota>1024</diskQuota>
+                    <healthCheckTimeout>60</healthCheckTimeout>
+					<buildpack>cov-apps</buildpack>
+					<path>target/cloginstance-webapp-TRUNK-SNAPSHOT.war</path>
+                    <env>
+                        <db_driver>com.mysql.jdbc.Driver</db_driver>
+						<db_user>root</db_user>
+						<db_password>root</db_password>
+						<db_url>jdbc:mysql://localhost:3306/SVC_CLOG_INSTANCE</db_url>
+						<es_aliasUrl>http://localhost:9200</es_aliasUrl>
+						<es_indexname>clog-test</es_indexname>
+						<group_baseServiceUrl>http://group-1-1-qa.run.covisintrnd.com</group_baseServiceUrl>
+                    </env>
+                    <mergeEnv>true</mergeEnv>
+                    <services>
+                        <service>
+                            <name>postgres-test</name>
+                            <label>elephantsql</label>
+                            <plan>turtle</plan>
+                        </service>
+                        <service>
+                            <name>web-service</name>
+                            <label>user-provided</label>
+                            <userProvidedCredentials>
+                                <url>http://example.com/service</url>
+                                <accessKey>abc123</accessKey>
+                            </userProvidedCredentials>
+                        </service>
+                        <service>
+                                <name>logger-web-console</name>
+                                <label>user-provided</label>
+                                <syslogDrainUrl>syslog://log.example.com:5000</syslogDrainUrl>
+                                <userProvidedCredentials/>
+                        </service>
+                    </services>
+                </configuration>
+				<executions>
+					<execution>
+						<id>pre-integration-test</id>
+						<goals>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+            </plugin>
+-->			
 		</plugins>
 	</build>
 
