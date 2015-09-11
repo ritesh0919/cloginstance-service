@@ -1,7 +1,7 @@
 ---
 applications:
  - name: clog
-   memory: 1G
+   memory: 512
    timeout: 180
    domain: run.covisintrnd.com
    env:
