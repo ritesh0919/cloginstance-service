@@ -4,6 +4,7 @@ applications:
    memory: 512M
    domain: run.covisintrnd.com
    buildpack: covs-java
+   path: webapp/targer/cloginstance-webapp-TRUNK-SNAPSHOT.war
    env:
     db_driver: "com.mysql.jdbc.Driver"
     db_url: "jdbc:mysql://10.96.32.202:3306/cf_aa78c0ba_da5a_4544_8439_a9c343d84554"
