@@ -66,6 +66,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+			<!--
 				<plugin>
 					<groupId>org.eclipse.jetty</groupId>
 					<artifactId>jetty-maven-plugin</artifactId>
@@ -82,6 +83,7 @@
 						</systemProperties>
 					</configuration>
 				</plugin>
+			-->
 			</plugins>
 		</pluginManagement>
 	</build>
