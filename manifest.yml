@@ -3,7 +3,7 @@ applications:
  - name: clogservice
    memory: 512M
    domain: run.covisintrnd.com
-   buildpack: covs-java
+   buildpack: https://github.com/Covisint-PST/java-buildpack.git#jacoco
    path: webapp/target/cloginstance-webapp-TRUNK-SNAPSHOT.war
    env:
     db_driver: "com.mysql.jdbc.Driver"
