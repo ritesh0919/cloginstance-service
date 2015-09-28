@@ -13,3 +13,5 @@ applications:
     es_aliasUrl: http://10.96.24.31:9200
     es_indexname: covisint-s-demo11-reg03
     group_baseServiceUrl: http://group-1-1-qa.run.covisintrnd.com
+	JACOCO_SERVER_URL: localhost
+	JACOCO_SERVER_PORT: $JACOCO_SERVER_PORT
